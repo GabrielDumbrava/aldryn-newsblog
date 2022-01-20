@@ -284,7 +284,7 @@ class NewsBlogCMSPlugin(CMSPlugin):
     # avoid reverse relation name clashes by not adding a related_name
     # to the parent plugin
     cmsplugin_ptr = models.OneToOneField(
-        CMSPlugin, related_name='+', parent_link=True)
+        CMSPlugin, related_name='+', parent_link=True, on_delete=models.CASCADE)
 
     app_config = models.ForeignKey(NewsBlogConfig, verbose_name=_('Apphook configuration'), on_delete=models.PROTECT)
 
