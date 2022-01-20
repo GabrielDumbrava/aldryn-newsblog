@@ -156,7 +156,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='NewsBlogFeaturedArticlesPlugin',
             fields=[
-                ('cmsplugin_ptr', models.OneToOneField(parent_link=True, related_name='+', primary_key=True, serialize=False, to='cms.CMSPlugin')),
+                ('cmsplugin_ptr', models.OneToOneField(parent_link=True, related_name='+', primary_key=True, serialize=False, to='cms.CMSPlugin',
+                                                       on_delete=models.CASCADE)),
                 ('article_count', models.PositiveIntegerField(default=1, help_text='The maximum number of featured articles display.', validators=[django.core.validators.MinValueValidator(1)])),
                 ('app_config', models.ForeignKey(to='aldryn_newsblog.NewsBlogConfig', on_delete=models.PROTECT)),
             ],
