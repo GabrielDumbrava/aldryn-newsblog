@@ -169,7 +169,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='NewsBlogLatestArticlesPlugin',
             fields=[
-                ('cmsplugin_ptr', models.OneToOneField(parent_link=True, related_name='+', primary_key=True, serialize=False, to='cms.CMSPlugin')),
+                ('cmsplugin_ptr', models.OneToOneField(parent_link=True, related_name='+', primary_key=True, serialize=False, to='cms.CMSPlugin',
+                                                       on_delete=models.CASCADE)),
                 ('latest_articles', models.IntegerField(default=5, help_text='The maximum number of latest articles to display.')),
                 ('app_config', models.ForeignKey(to='aldryn_newsblog.NewsBlogConfig', on_delete=models.PROTECT)),
             ],
@@ -261,7 +262,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='article',
             name='featured_image',
-            field=filer.fields.image.FilerImageField(blank=True, to='filer.Image', null=True),
+            field=filer.fields.image.FilerImageField(blank=True, to='filer.Image', null=True, on_delete=models.SET_NULL),
             preserve_default=True,
         ),
         migrations.AddField(
