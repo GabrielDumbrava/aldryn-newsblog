@@ -10,7 +10,10 @@ try:
 except ImportError:
     # Django 1.6
     from django.contrib.sites.models import get_current_site
-from django.core.urlresolvers import reverse, NoReverseMatch
+try:
+    from django.core.urlresolvers import reverse, NoReverseMatch
+except ModuleNotFoundError:
+    from django.urls import reverse, NoReverseMatch
 from django.db import models
 from django.template import RequestContext
 from django.test import RequestFactory

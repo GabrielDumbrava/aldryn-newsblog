@@ -3,8 +3,10 @@
 from __future__ import unicode_literals
 
 from datetime import timedelta
-
-from django.core.urlresolvers import reverse
+try:
+    from django.core.urlresolvers import reverse
+except ModuleNotFoundError:
+    from django.urls import reverse
 from django.test import TransactionTestCase
 from django.utils.timezone import now
 from django.utils.translation import override

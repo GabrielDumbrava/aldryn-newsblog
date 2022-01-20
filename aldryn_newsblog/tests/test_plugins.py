@@ -7,7 +7,10 @@ import datetime
 import pytz
 
 from django.core.cache import cache
-from django.core.urlresolvers import reverse
+try:
+    from django.core.urlresolvers import reverse
+except ModuleNotFoundError:
+    from django.urls import reverse
 from django.utils.translation import force_text, override
 
 from aldryn_newsblog.models import NewsBlogConfig

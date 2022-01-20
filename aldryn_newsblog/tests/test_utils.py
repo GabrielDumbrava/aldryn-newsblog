@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
-
-from django.core.urlresolvers import NoReverseMatch, reverse
+try:
+    from django.core.urlresolvers import NoReverseMatch, reverse
+except ModuleNotFoundError:
+    from django.urls import NoReverseMatch, reverse
 
 from unittest import TestCase
 

@@ -15,7 +15,11 @@ from cms.utils.i18n import get_current_language, get_redirect_on_fallback
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
-from django.core.urlresolvers import reverse
+try:
+    from django.core.urlresolvers import reverse
+except ModuleNotFoundError:
+    from django.urls import reverse
+
 from django.db import connection, models
 from django.db.models.signals import post_save
 from django.dispatch import receiver

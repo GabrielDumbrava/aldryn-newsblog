@@ -3,7 +3,10 @@ from __future__ import unicode_literals
 
 from unittest import skipIf
 
-from django.core.urlresolvers import reverse
+try:
+    from django.core.urlresolvers import reverse
+except ModuleNotFoundError:
+    from django.urls import reverse
 from django.db import transaction
 from aldryn_reversion.core import create_revision as aldryn_create_revision
 from parler.utils.context import switch_language
