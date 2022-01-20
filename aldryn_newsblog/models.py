@@ -480,7 +480,7 @@ class NewsBlogRelatedPlugin(PluginEditModeMixin, AdjustableCacheModelMixin,
     # NOTE: This one does NOT subclass NewsBlogCMSPlugin. This is because this
     # plugin can really only be placed on the article detail view in an apphook.
     cmsplugin_ptr = models.OneToOneField(
-        CMSPlugin, related_name='+', parent_link=True)
+        CMSPlugin, related_name='+', parent_link=True, on_delete=models.CASCADE)
 
     def get_articles(self, article, request):
         """
