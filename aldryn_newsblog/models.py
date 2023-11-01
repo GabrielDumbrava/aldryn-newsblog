@@ -259,9 +259,11 @@ class PluginEditModeMixin(object):
         Returns True only if an operator is logged-into the CMS and is in
         edit mode.
         """
-        return (
-            hasattr(request, 'toolbar') and request.toolbar and
-            request.toolbar.edit_mode)
+        try:
+            edit_mode = request.toolbar.edit_mode
+        except AttributeError:
+            edit_mode = request.toolbar.edit_mode_active
+        return hasattr(request, 'toolbar') and request.toolbar and edit_mode
 
 
 class AdjustableCacheModelMixin(models.Model):
