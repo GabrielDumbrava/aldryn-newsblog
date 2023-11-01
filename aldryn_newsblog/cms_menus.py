@@ -25,7 +25,12 @@ class NewsBlogMenu(CMSAttachMenu):
     def get_queryset(self, request):
         """Returns base queryset with support for preview-mode."""
         queryset = Article.objects
-        if not (request.toolbar and request.toolbar.edit_mode):
+        try:
+            # cms 3.4.5 compat
+            edit_mode = request.toolbar.edit_mode
+        except AttributeError:
+            edit_mode = request.toolbar.edit_mode_active
+        if not (request.toolbar and edit_mode):
             queryset = queryset.published()
         return queryset
 
