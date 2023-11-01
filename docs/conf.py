@@ -12,8 +12,9 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys
 import os
+import sys
+
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -111,7 +112,7 @@ if not on_rtd:  # only import and set the theme if we're building docs locally
         import sphinx_rtd_theme
         html_theme = 'sphinx_rtd_theme'
         html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
-    except:
+    except:  # noqa: E722
         html_theme = 'default'
 
 # The theme to use for HTML and HTML Help pages.  Major themes that come with

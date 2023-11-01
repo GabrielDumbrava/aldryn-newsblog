@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
+
 import os
 import random
 import string
@@ -8,29 +9,27 @@ import sys
 
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser, User
-try:
-    from django.core.urlresolvers import clear_url_caches
-except ModuleNotFoundError:
-    from django.urls import clear_url_caches
 from django.core.cache import cache
 from django.test import RequestFactory
+from django.urls import clear_url_caches
 from django.utils.timezone import now
 from django.utils.translation import override
-from aldryn_categories.models import Category
-from aldryn_newsblog.cms_apps import NewsBlogApp
-from aldryn_newsblog.models import Article, NewsBlogConfig
-from aldryn_people.models import Person
+
 from cms import api
 from cms.apphook_pool import apphook_pool
 from cms.appresolver import clear_app_resolvers
 from cms.exceptions import AppAlreadyRegistered
 from cms.test_utils.testcases import CMSTestCase, TransactionCMSTestCase
-from cms.utils import get_cms_setting
-
 from cms.toolbar.toolbar import CMSToolbar
+from cms.utils.conf import get_cms_setting
 
-
+from aldryn_categories.models import Category
+from aldryn_people.models import Person
 from parler.utils.context import switch_language
+
+from aldryn_newsblog.cms_apps import NewsBlogApp
+from aldryn_newsblog.models import Article, NewsBlogConfig
+
 
 TESTS_ROOT = os.path.abspath(os.path.dirname(__file__))
 TESTS_STATIC_ROOT = os.path.abspath(os.path.join(TESTS_ROOT, 'static'))
@@ -81,10 +80,11 @@ class NewsBlogTestsMixin(object):
         return prefix + u''.join(random.choice(chars) for _ in range(length))
 
     @classmethod
-    def create_user(cls):
-        return User.objects.create(
-            username=cls.rand_str(), first_name=cls.rand_str(),
-            last_name=cls.rand_str())
+    def create_user(cls, **kwargs):
+        kwargs.setdefault('username', cls.rand_str())
+        kwargs.setdefault('first_name', cls.rand_str())
+        kwargs.setdefault('last_name', cls.rand_str())
+        return User.objects.create(**kwargs)
 
     def create_person(self):
         return Person.objects.create(
@@ -187,9 +187,23 @@ class NewsBlogTestsMixin(object):
         self.template = get_cms_setting('TEMPLATES')[0][0]
         self.language = settings.LANGUAGES[0][0]
         self.root_page = api.create_page(
-            'root page', self.template, self.language, published=True)
-        self.app_config = NewsBlogConfig.objects.create(
-            namespace='NBNS', paginate_by=15)
+            'root page',
+            self.template,
+            self.language,
+            published=True,
+        )
+
+        try:
+            # Django-cms 3.5 doesn't set is_home when create_page is called
+            self.root_page.set_as_homepage()
+        except AttributeError:
+            pass
+
+        self.app_config = NewsBlogConfig.objects.language(self.language).create(
+            app_title='news_blog',
+            namespace='NBNS',
+            paginate_by=15,
+        )
         self.page = api.create_page(
             'page', self.template, self.language, published=True,
             parent=self.root_page,
@@ -210,6 +224,11 @@ class NewsBlogTestsMixin(object):
 
 class CleanUpMixin(object):
     apphook_object = None
+
+    def setUp(self):
+        super(CleanUpMixin, self).setUp()
+        apphook_object = self.get_apphook_object()
+        self.reload_urls(apphook_object)
 
     def tearDown(self):
         """
@@ -234,8 +253,7 @@ class CleanUpMixin(object):
         if apphook_object is None:
             apphook_object = self.get_apphook_object()
         app_config = getattr(apphook_object, 'app_config', None)
-        if (app_config and
-                getattr(app_config, 'cmsapp', None)):
+        if app_config and getattr(app_config, 'cmsapp', None):
             delattr(apphook_object.app_config, 'cmsapp')
         if getattr(app_config, 'cmsapp', None):
             delattr(app_config, 'cmsapp')

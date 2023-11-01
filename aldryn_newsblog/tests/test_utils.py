@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
-try:
-    from django.core.urlresolvers import NoReverseMatch, reverse
-except ModuleNotFoundError:
-    from django.urls import NoReverseMatch, reverse
 
 from unittest import TestCase
+
+from django.urls import NoReverseMatch, reverse
 
 from ..utils import add_prefix_to_path, default_reverse
 
@@ -71,6 +69,6 @@ class TestAddPrefixToPath(TestCase):
                     default_reverse(non_pattern, default=default),
                     default
                 )
-            except:
+            except:  # noqa: E722
                 self.fail('default_reverse raised exception even though we '
                           'set a default value of: {0}.'.format(default))

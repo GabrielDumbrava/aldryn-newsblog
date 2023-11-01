@@ -1,22 +1,20 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.contrib import admin
+from django.utils.translation import ugettext_lazy as _
+
+from cms.admin.placeholderadmin import (
+    FrontendEditableAdminMixin, PlaceholderAdminMixin,
+)
+
 from aldryn_apphooks_config.admin import BaseAppHookConfig, ModelAppHookConfig
 from aldryn_people.models import Person
 from aldryn_translation_tools.admin import AllTranslationsMixin
-from cms.admin.placeholderadmin import FrontendEditableAdminMixin
-from django.contrib import admin
-from django.utils.translation import ugettext_lazy as _
 from parler.admin import TranslatableAdmin
 from parler.forms import TranslatableModelForm
 
 from . import models
-from .settings import ENABLE_REVERSION
-
-if ENABLE_REVERSION:
-    from aldryn_reversion.admin import VersionedPlaceholderAdminMixin
-else:
-    from cms.admin.placeholderadmin import PlaceholderAdminMixin as VersionedPlaceholderAdminMixin
 
 
 def make_published(modeladmin, request, queryset):
@@ -95,14 +93,14 @@ class ArticleAdminForm(TranslatableModelForm):
         # Don't allow related articles to be added here.
         # doesn't makes much sense to add articles from another article other
         # than save and add another.
-        if ('related' in self.fields and
+        if ('related' in self.fields and  # noqa: W504
                 hasattr(self.fields['related'], 'widget')):
             self.fields['related'].widget.can_add_related = False
 
 
 class ArticleAdmin(
     AllTranslationsMixin,
-    VersionedPlaceholderAdminMixin,
+    PlaceholderAdminMixin,
     FrontendEditableAdminMixin,
     ModelAppHookConfig,
     TranslatableAdmin
@@ -156,6 +154,8 @@ class ArticleAdmin(
     app_config_values = {
         'default_published': 'is_published'
     }
+    app_config_selection_title = ''
+    app_config_selection_desc = ''
 
     def add_view(self, request, *args, **kwargs):
         data = request.GET.copy()
@@ -176,7 +176,7 @@ admin.site.register(models.Article, ArticleAdmin)
 
 class NewsBlogConfigAdmin(
     AllTranslationsMixin,
-    VersionedPlaceholderAdminMixin,
+    PlaceholderAdminMixin,
     BaseAppHookConfig,
     TranslatableAdmin
 ):

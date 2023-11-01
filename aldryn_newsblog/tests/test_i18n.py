@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
-try:
-    from django.core.urlresolvers import NoReverseMatch
-except ModuleNotFoundError:
-    from django.urls import NoReverseMatch
+
+from django.urls import NoReverseMatch
 from django.utils.translation import override
 
 from . import NewsBlogTestCase
